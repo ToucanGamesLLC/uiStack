@@ -1,8 +1,15 @@
 ﻿
 public static class DialogHelper {
 
-	public static BaseDialog DisplayDialog<T>(BaseDialog.Options options) where T : BaseDialog {
-		BaseDialog result = null;
+	public static T DisplayDialog<T>(BaseDialog.Options options, string dialogName = null) 
+		where T : BaseDialog {
+
+		T result = null;
+
+		result = ViewCanvas.Instance.DisplayDialog<T>(dialogName);
+		if (result != null) {
+			result.Populate(options);
+		}
 
 		return result;
 	}

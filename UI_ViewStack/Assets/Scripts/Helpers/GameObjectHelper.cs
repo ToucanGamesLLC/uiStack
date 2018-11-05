@@ -38,7 +38,7 @@ public static class GameObjectHelper {
 		T prefab, 
 		Transform parent, 
 		bool instantiateIWorldSpace = false
-	) where T : BaseDialog {
+	) where T : MonoBehaviour {
 		T result = null;
 
 		if (prefab != null) {
@@ -58,7 +58,7 @@ public static class GameObjectHelper {
 						+ " does not have component of type " 
 						+ typeof(T).Name
 					);
-				} else {
+
 					Destroy(gameObject, true);
 				}
 			}

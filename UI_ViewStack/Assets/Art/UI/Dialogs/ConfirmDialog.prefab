@@ -92,7 +92,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 28.3
+  m_fontSize: 37.65
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -199,8 +199,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogFrame: {fileID: 114578209644427498, guid: b641be1402b69f145a82ec39f9f0cd2b,
     type: 2}
-  height: 220
-  width: 200
+  displayAnimType: 1
+  topOffset: 75
+  bottomOffset: 100
+  leftOffset: 20
+  rightOffset: 20
 --- !u!222 &222579602563156320
 CanvasRenderer:
   m_ObjectHideFlags: 1

@@ -26,10 +26,24 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
 				if (_instance == null) {
 					_instance = (T)FindObjectOfType(typeof(T));
 
-					if (FindObjectsOfType(typeof(T)).Length > 1) {
+					Object[] singletonObjects = FindObjectsOfType(typeof(T));
+					if (singletonObjects.Length > 1) {
+						string objectNames = string.Empty;
+						foreach(Object singletonObject in singletonObjects) {
+							T singletonObjectComp = singletonObject as T;
+							if (singletonObjectComp!= null) {
+								objectNames = string.Format("{0}\n{1}", 
+									singletonObjectComp.name, 
+									objectNames
+								);
+							}
+						}
 						Debug.LogError("[Singleton] Something went really wrong " +
-							" - there should never be more than 1 singleton!" +
-							" Reopening the scene might fix it.");
+							" - there should never be more than 1 singleton!  " +
+							" Found " + singletonObjects.Length +
+							".  Reopening the scene might fix it.\n" +
+							 objectNames
+						);
 						return _instance;
 					}
 

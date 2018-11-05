@@ -75,6 +75,16 @@ public class PrefabManager : BaseMonobehaviorManager<PrefabManager> {
 
 		if (result == null) {
 			result = LoadPrefabFromCacheData(prefabName);
+
+			if (result == null) {
+				LogHelper.LogError("Failed to load prefab "
+					+ prefabName 
+					+ " from "
+					+ GetType().Name
+					+ " cached data",
+					this
+				);
+			}
 		}
 
 		return result;

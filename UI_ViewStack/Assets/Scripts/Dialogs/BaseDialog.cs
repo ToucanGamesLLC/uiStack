@@ -12,8 +12,11 @@ public abstract class BaseDialog : MonoBehaviour {
 	#region Public fields
 
 	public DialogFrame dialogFrame;
-	public float height;
-	public float width;
+	public DialogFrame.DisplayAnimType displayAnimType;
+	public float topOffset;
+	public float bottomOffset;
+	public float leftOffset;
+	public float rightOffset;
 
 	#endregion
 
