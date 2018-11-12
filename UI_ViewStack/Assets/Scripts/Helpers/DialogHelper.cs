@@ -6,6 +6,10 @@ public static class DialogHelper {
 
 		T result = null;
 
+		if(string.IsNullOrEmpty(dialogName)) {
+			dialogName = typeof(T).Name;
+		}
+
 		result = ViewCanvas.Instance.DisplayDialog<T>(dialogName);
 		if (result != null) {
 			result.Populate(options);

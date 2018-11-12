@@ -19,21 +19,100 @@ public class ViewCanvas : BaseMonobehaviorManager<ViewCanvas> {
 	#endregion
 
 
+	#region Display methods
+
 	public T DisplayDialog<T>(string dialogName = null) where T : BaseDialog {
 		T result = LoadDialog<T>(dialogName);
 
 		if (result != null) {
+			result.dialogFramePrefab.gameObject.SetActive(false);
+
 			if (activeDialog != null) {
-				activeDialog.dialogFrame.Hide();
-				PushDialog(activeDialog);
+				BaseDialog dialogToHide = activeDialog;
+				PushDialog(dialogToHide);
+
+				activeDialog = result;
+
+				dialogToHide.dialogFramePrefab.Hide(() => {
+					activeDialog.dialogFramePrefab.Show();
+				});
+			} else {
+				activeDialog = result;
+				activeDialog.dialogFramePrefab.Show();
 			}
 
-			activeDialog = result;
 			SetDirty();
 		}
 
 		return result;
 	}
+
+	private void PushDialog(BaseDialog dialog) {
+		if (dialog != null) {
+			if (dialogStack == null) {
+				dialogStack = new Stack<BaseDialog>();
+			}
+			
+			dialogStack.Push(dialog);
+		}
+	}
+
+	#endregion
+
+
+	public void TryCloseDialog(BaseDialog dialog) {
+		if (dialog != null) {
+			if (activeDialog != null) {
+				if(dialog == activeDialog) {
+					activeDialog = PopDialog();
+					if (activeDialog != null) {
+						activeDialog.dialogFramePrefab.gameObject.SetActive(false);
+					}
+
+					dialog.dialogFramePrefab.Hide(() => {
+						GameObjectHelper.Destroy(dialog.dialogFramePrefab.gameObject, 0.25f);
+						if(activeDialog!= null) {
+							activeDialog.dialogFramePrefab.Show();
+						}
+					});
+
+					SetDirty();
+				} else {
+					LogHelper.LogError("Cannot close dialog "
+						+ dialog.GetType() 
+						+ " "
+						+ dialog.name
+						+ "; "
+						+ nameof(activeDialog)
+						+ " and "
+						+ nameof(dialog)
+						+ " are not the same",
+						this
+					);
+				}
+			} else {
+				LogHelper.LogError("Cannot close dialog "
+					+ dialog.GetType().Name
+					+ " "
+					+ dialog.name 
+					+ "; " 
+					+ nameof(activeDialog) 
+					+ " is not set",
+					this
+				);
+			}
+		}
+	}
+	
+	private BaseDialog PopDialog() {
+		BaseDialog result = null;
+
+		if (dialogStack != null && dialogStack.Count > 0) {
+			result = dialogStack.Pop();
+		}
+
+		return result;
+    }
 
 	private T LoadDialog<T>(string dialogName = null) where T : BaseDialog {
 		T result = null;
@@ -52,10 +131,10 @@ public class ViewCanvas : BaseMonobehaviorManager<ViewCanvas> {
 					: null;
 
 				if (dialogPrefab != null) {
-					if (dialogPrefab.dialogFrame != null) {
-						DialogFrame dialoFrame = 
+					if (dialogPrefab.dialogFramePrefab != null) {
+						DialogFrame dialoFrame =
 							GameObjectHelper.AddChildrenWithComponent<DialogFrame>(
-							dialogPrefab.dialogFrame, 
+							dialogPrefab.dialogFramePrefab,
 							dialogCanvas.transform
 						);
 
@@ -70,13 +149,13 @@ public class ViewCanvas : BaseMonobehaviorManager<ViewCanvas> {
 								);
 
 								GameObjectHelper.Destroy(result.gameObject, true);
-							} 
+							}
 						}
 					} else {
 						LogHelper.LogWarning("Failed to load "
 							+ typeof(T).Name
 							+ "; missing "
-							+ nameof(dialogPrefab.dialogFrame),
+							+ nameof(dialogPrefab.dialogFramePrefab),
 							this
 						);
 					}
@@ -93,33 +172,4 @@ public class ViewCanvas : BaseMonobehaviorManager<ViewCanvas> {
 		return result;
 	}
 
-	private void PushDialog(BaseDialog dialog) {
-		if (dialog != null) {
-			if (dialogStack == null) {
-				dialogStack = new Stack<BaseDialog>();
-			}
-			
-			dialogStack.Push(dialog);
-		}
-	}
-
-	private BaseDialog PopDialog() {
-		BaseDialog result = null;
-
-		if (activeDialog == null) {
-			if (dialogStack != null && dialogStack.Count > 0) {
-				result = dialogStack.Pop();
-			}
-		} else {
-			LogHelper.LogError("Failed to popr "
-				+ typeof(BaseDialog).Name
-				+ "; "
-				+ nameof(activeDialog)
-				+ " is already assigned",
-				this
-			);
-		}
-
-		return result;
-    }
 }

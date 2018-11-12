@@ -1,6 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class DialogFrame : MonoBehaviour {
+
+	#region Delegates
+
+	public delegate void VoidDelegate();
+
+	#endregion
+
 
 	public enum DisplayAnimType {
 		None,
@@ -10,6 +18,8 @@ public class DialogFrame : MonoBehaviour {
 	#region public fields
 
 	public RectTransform dialogPanel;
+	public Button closeButon;
+
 	public BaseDialog dialogContent { get; private set; }
 
 	#endregion
@@ -27,12 +37,18 @@ public class DialogFrame : MonoBehaviour {
 			);
 
 			if (dialogContent != null) {
-				dialogContent.dialogFrame = this;
+				dialogContent.dialogFramePrefab = this;
 				RectTransform rectTransform = GetComponent<RectTransform>();
 
 				if (rectTransform != null) {
 					rectTransform.offsetMax = new Vector2(-dialogContent.rightOffset, -dialogContent.topOffset);
 					rectTransform.offsetMin = new Vector2(dialogContent.leftOffset, dialogContent.bottomOffset);
+				}
+
+				if (closeButon != null) {
+					if (dialogContent.options != null) {
+						closeButon.gameObject.SetActive(dialogContent.options.showCloseButton);
+					}
 				}
 			}
 		} else {
@@ -48,6 +64,8 @@ public class DialogFrame : MonoBehaviour {
 
 	#endregion
 
+
+	#region Show and hide methods
 
 	public void Show() {
 		if (dialogContent != null) {
@@ -67,11 +85,16 @@ public class DialogFrame : MonoBehaviour {
 		}
 	}
 
-	public void Hide() {
+	public void Hide(VoidDelegate onHideCompleted = null) {
 		if (dialogContent != null) {
 			switch (dialogContent.displayAnimType) {
 				case DisplayAnimType.EnableDsiable:
 					gameObject.SetActive(false);
+
+					if(onHideCompleted != null) {
+						onHideCompleted();
+					}
+
 					break;
 
 				default:
@@ -82,6 +105,13 @@ public class DialogFrame : MonoBehaviour {
 					);
 					break;
 			}
+		}
+	}
+	#endregion
+
+	public void OnCloseButtonClick() {
+		if(dialogContent != null) {
+			dialogContent.CloseDialog();
 		}
 	}
 }

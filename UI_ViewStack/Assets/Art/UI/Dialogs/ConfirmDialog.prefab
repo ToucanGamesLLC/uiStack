@@ -197,7 +197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e297c438feb49a4380dcde85d360ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogFrame: {fileID: 114578209644427498, guid: b641be1402b69f145a82ec39f9f0cd2b,
+  dialogFramePrefab: {fileID: 114578209644427498, guid: b641be1402b69f145a82ec39f9f0cd2b,
     type: 2}
   displayAnimType: 1
   topOffset: 75

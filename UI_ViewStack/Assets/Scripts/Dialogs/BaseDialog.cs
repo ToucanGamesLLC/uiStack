@@ -2,16 +2,25 @@
 
 public abstract class BaseDialog : MonoBehaviour {
 
-    #region Constants
+	#region Callbacks fields
 
-    private const float REFRESH_INTERVAL = 1.0f;
+	public delegate void VoidBaseDialogDelegate(BaseDialog dialog);
+
+	private VoidBaseDialogDelegate m_onCloseDialog;
+
+	#endregion
+
+
+	#region Constants
+
+	private const float REFRESH_INTERVAL = 1.0f;
 
 	#endregion
 
 
 	#region Public fields
 
-	public DialogFrame dialogFrame;
+	public DialogFrame dialogFramePrefab;
 	public DialogFrame.DisplayAnimType displayAnimType;
 	public float topOffset;
 	public float bottomOffset;
@@ -24,9 +33,13 @@ public abstract class BaseDialog : MonoBehaviour {
 	#region Accessors 
 
 	public class Options {
+
 		public string titleText;
         public bool allowRefrehInterval;
-    }
+		public bool showCloseButton;
+		public VoidBaseDialogDelegate onCloseDialog;
+	
+	}
 
     public Options options { get; private set; }
 	
@@ -37,10 +50,10 @@ public abstract class BaseDialog : MonoBehaviour {
 
 	private float m_updateInterval;
 
-    #endregion
+	#endregion
 
 
-    #region Monobehavior
+	#region Monobehavior
 
 	protected virtual void Awake() {
 
@@ -56,12 +69,26 @@ public abstract class BaseDialog : MonoBehaviour {
         }
     }
 
-    #endregion
+	#endregion
 
 
-    public virtual void Populate(Options options) {
+	#region Populate methods
+
+	public virtual void Populate(Options options) {
         this.options = options;
     }
 
-    public virtual void RefreshOnInterval() { }
+	#endregion
+
+
+	public virtual void RefreshOnInterval() { }
+
+	public void CloseDialog() {
+		if (m_onCloseDialog != null) {
+			m_onCloseDialog(this);
+		}
+
+		ViewCanvas.Instance.TryCloseDialog(this);
+	}
+
 }
