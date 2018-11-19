@@ -2,11 +2,11 @@
 using UnityEngine;
 using UnityEditor;
 
-public class BaseMonobehaviorManager<T> : Singleton<T>, IGameManager where T : MonoBehaviour {
+public class BaseMonobehaviorGameManager<T> : Singleton<T>, IGameManager where T : MonoBehaviour, IGameManager {
 
 	#region protected fields
 
-	protected bool _initialized;
+	protected bool m_initialized;
 
 	#endregion
 
@@ -21,7 +21,7 @@ public class BaseMonobehaviorManager<T> : Singleton<T>, IGameManager where T : M
 
 	#region IGameManager
 
-	public bool initialzied { get { return _initialized; } }
+	public bool initialzied { get { return m_initialized; } }
 	
 	public virtual IEnumerator Initialize() {
 		yield return null;

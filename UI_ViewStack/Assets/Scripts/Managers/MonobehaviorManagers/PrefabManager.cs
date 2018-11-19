@@ -2,7 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrefabManager : BaseMonobehaviorManager<PrefabManager> {
+public class PrefabManager : BaseMonobehaviorGameManager<PrefabManager> {
+
+	#region const fields
+
+	private const string SPRTES_CSV_FILE_NAME = "Sprites";
+
+	#endregion
+
 
 	#region public fields
 
@@ -18,7 +25,13 @@ public class PrefabManager : BaseMonobehaviorManager<PrefabManager> {
 	#endregion
 
 
-	private void Awake() {
+	#region BaseMonobehaviorGameManager
+
+	public override IEnumerator Preinitialize() {
+		yield return base.Preinitialize();
+
+		m_prefabsByName = new Dictionary<string, GameObject>();
+		
 		if (prefabs != null) {
 			m_prefabsByName = new Dictionary<string, GameObject>();
 
@@ -42,18 +55,45 @@ public class PrefabManager : BaseMonobehaviorManager<PrefabManager> {
 				}
 			}
 		}
+
+		yield return null;
 	}
 
-	private GameObject LoadPrefabFromCacheData(string prefabName) {
+	public override IEnumerator Initialize() {
+		yield return base.Initialize();
+
+		int cachedPrefabs = (m_prefabsByName != null) ? m_prefabsByName.Count : 0;
+
+		LogHelper.LogMessage(GetType().Name 
+			+ " initialized completed : " 
+			+ nameof(m_prefabsByName)
+			+ " size : "
+			+ cachedPrefabs, 
+			this
+		);
+
+		m_initialized = true;
+
+		SetDirty();
+
+		yield return null;
+	}
+
+	#endregion
+
+
+	#region Prefab loading 
+
+	private GameObject LoadPrefabFromCacheData(string _prefabName) {
 		GameObject result = null;
 
-		if (!string.IsNullOrEmpty(prefabName)) {
+		if (!string.IsNullOrEmpty(_prefabName)) {
 			if (m_prefabsByName != null) {
-				if (!m_prefabsByName.TryGetValue(prefabName, out result)
+				if (!m_prefabsByName.TryGetValue(_prefabName, out result)
 					|| result == null
 				) {
 					LogHelper.LogWarning("Failed to load prefab with name "
-						+ prefabName
+						+ _prefabName
 						+ "; prefab cannot be found",
 						this
 					);
@@ -61,7 +101,7 @@ public class PrefabManager : BaseMonobehaviorManager<PrefabManager> {
 			}
 		} else {
 			LogHelper.LogWarning("Cannot load prefab; "
-				+ nameof(prefabName)
+				+ nameof(_prefabName)
 				+ " is not set",
 				this
 			);
@@ -70,15 +110,15 @@ public class PrefabManager : BaseMonobehaviorManager<PrefabManager> {
 		return result;
 	}
 
-	public GameObject LoadPrefab(string prefabName) {
+	public GameObject LoadPrefab(string _prefabName) {
 		GameObject result = null;
-
+		
 		if (result == null) {
-			result = LoadPrefabFromCacheData(prefabName);
+			result = LoadPrefabFromCacheData(_prefabName);
 
 			if (result == null) {
 				LogHelper.LogError("Failed to load prefab "
-					+ prefabName 
+					+ _prefabName 
 					+ " from "
 					+ GetType().Name
 					+ " cached data",
@@ -89,4 +129,7 @@ public class PrefabManager : BaseMonobehaviorManager<PrefabManager> {
 
 		return result;
 	}
+
+	#endregion
+
 }

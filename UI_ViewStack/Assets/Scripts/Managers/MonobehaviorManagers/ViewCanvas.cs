@@ -1,28 +1,22 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewCanvas : BaseMonobehaviorManager<ViewCanvas> {
-
-	#region private fields
-
-	public Stack<BaseDialog> dialogStack { get; private set; }
-
-	#endregion
-
+public class ViewCanvas : BaseMonobehaviorGameManager<ViewCanvas> {
 
 	#region public fields and accessors
 
 	public RectTransform dialogCanvas;
 
 	public BaseDialog activeDialog { get; private set; }
+	public Stack<BaseDialog> dialogStack { get; private set; }
 
 	#endregion
 
 
 	#region Display methods
 
-	public T DisplayDialog<T>(string dialogName = null) where T : BaseDialog {
-		T result = LoadDialog<T>(dialogName);
+	public T DisplayDialog<T>(string _dialogName = null) where T : BaseDialog {
+		T result = LoadDialog<T>(_dialogName);
 
 		if (result != null) {
 			result.dialogFramePrefab.gameObject.SetActive(false);
@@ -47,30 +41,30 @@ public class ViewCanvas : BaseMonobehaviorManager<ViewCanvas> {
 		return result;
 	}
 
-	private void PushDialog(BaseDialog dialog) {
-		if (dialog != null) {
+	private void PushDialog(BaseDialog _dialog) {
+		if (_dialog != null) {
 			if (dialogStack == null) {
 				dialogStack = new Stack<BaseDialog>();
 			}
 			
-			dialogStack.Push(dialog);
+			dialogStack.Push(_dialog);
 		}
 	}
 
 	#endregion
 
 
-	public void TryCloseDialog(BaseDialog dialog) {
-		if (dialog != null) {
+	public void TryCloseDialog(BaseDialog _dialog) {
+		if (_dialog != null) {
 			if (activeDialog != null) {
-				if(dialog == activeDialog) {
+				if(_dialog == activeDialog) {
 					activeDialog = PopDialog();
 					if (activeDialog != null) {
 						activeDialog.dialogFramePrefab.gameObject.SetActive(false);
 					}
 
-					dialog.dialogFramePrefab.Hide(() => {
-						GameObjectHelper.Destroy(dialog.dialogFramePrefab.gameObject, 0.25f);
+					_dialog.dialogFramePrefab.Hide(() => {
+						GameObjectHelper.Destroy(_dialog.dialogFramePrefab.gameObject, 0.25f);
 						if(activeDialog!= null) {
 							activeDialog.dialogFramePrefab.Show();
 						}
@@ -79,22 +73,22 @@ public class ViewCanvas : BaseMonobehaviorManager<ViewCanvas> {
 					SetDirty();
 				} else {
 					LogHelper.LogError("Cannot close dialog "
-						+ dialog.GetType() 
+						+ _dialog.GetType() 
 						+ " "
-						+ dialog.name
+						+ _dialog.name
 						+ "; "
 						+ nameof(activeDialog)
 						+ " and "
-						+ nameof(dialog)
+						+ nameof(_dialog)
 						+ " are not the same",
 						this
 					);
 				}
 			} else {
 				LogHelper.LogError("Cannot close dialog "
-					+ dialog.GetType().Name
+					+ _dialog.GetType().Name
 					+ " "
-					+ dialog.name 
+					+ _dialog.name 
 					+ "; " 
 					+ nameof(activeDialog) 
 					+ " is not set",
@@ -114,15 +108,15 @@ public class ViewCanvas : BaseMonobehaviorManager<ViewCanvas> {
 		return result;
     }
 
-	private T LoadDialog<T>(string dialogName = null) where T : BaseDialog {
+	private T LoadDialog<T>(string _dialogName = null) where T : BaseDialog {
 		T result = null;
 
 		if (dialogCanvas != null) {
-			dialogName = (!string.IsNullOrEmpty(dialogName))
-				? dialogName
+			_dialogName = (!string.IsNullOrEmpty(_dialogName))
+				? _dialogName
 				: typeof(T).Name;
 
-			if (!string.IsNullOrEmpty(dialogName)) {
+			if (!string.IsNullOrEmpty(_dialogName)) {
 				GameObject baseDialogPrefab =
 					PrefabManager.Instance.LoadPrefab(typeof(T).Name);
 
@@ -144,7 +138,7 @@ public class ViewCanvas : BaseMonobehaviorManager<ViewCanvas> {
 							if (result == null) {
 								LogHelper.LogError(
 									"Failed to instantiate dialog content for "
-									+ dialogName,
+									+ _dialogName,
 									this
 								);
 

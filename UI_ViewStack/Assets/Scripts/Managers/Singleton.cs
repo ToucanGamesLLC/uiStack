@@ -9,9 +9,9 @@
 /// As a note, this is made as MonoBehaviour because we need Coroutines.
 /// </summary>
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
-	private static T _instance;
+	private static T m_instance;
 
-	private static object _lock = new object();
+	private static object m_lock = new object();
 
 	public static T Instance {
 		get {
@@ -22,9 +22,9 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
 				return null;
 			}
 
-			lock (_lock) {
-				if (_instance == null) {
-					_instance = (T)FindObjectOfType(typeof(T));
+			lock (m_lock) {
+				if (m_instance == null) {
+					m_instance = (T)FindObjectOfType(typeof(T));
 
 					Object[] singletonObjects = FindObjectsOfType(typeof(T));
 					if (singletonObjects.Length > 1) {
@@ -44,12 +44,12 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
 							".  Reopening the scene might fix it.\n" +
 							 objectNames
 						);
-						return _instance;
+						return m_instance;
 					}
 
-					if (_instance == null) {
+					if (m_instance == null) {
 						GameObject singleton = new GameObject();
-						_instance = singleton.AddComponent<T>();
+						m_instance = singleton.AddComponent<T>();
 						singleton.name = "(singleton) " + typeof(T).ToString();
 
 						DontDestroyOnLoad(singleton);
@@ -59,11 +59,11 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
 							"' was created with DontDestroyOnLoad.");
 					} else {
 						Debug.Log("[Singleton] Using instance already created: " +
-							_instance.gameObject.name);
+							m_instance.gameObject.name);
 					}
 				}
 
-				return _instance;
+				return m_instance;
 			}
 		}
 	}

@@ -74,8 +74,12 @@ public abstract class BaseDialog : MonoBehaviour {
 
 	#region Populate methods
 
-	public virtual void Populate(Options options) {
-        this.options = options;
+	public virtual void Populate(Options _options) {
+        this.options = _options;
+
+		if (_options != null) {
+			m_onCloseDialog = _options.onCloseDialog;
+		}
     }
 
 	#endregion

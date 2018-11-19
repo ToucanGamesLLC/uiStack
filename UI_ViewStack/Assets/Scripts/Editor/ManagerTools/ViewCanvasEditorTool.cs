@@ -17,12 +17,12 @@ public class ViewCanvasEditorTool : Editor {
 		}
 	}
 
-	private void DisplayActiveDialogs(ViewCanvas viewCanvas) {
+	private void DisplayActiveDialogs(ViewCanvas _viewCanvas) {
 		EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 		
-		DisplayBaseDialog("Active Dialog", viewCanvas.activeDialog);
+		DisplayBaseDialog("Active Dialog", _viewCanvas.activeDialog);
 
-		Stack<BaseDialog> dialogStack = viewCanvas.dialogStack;
+		Stack<BaseDialog> dialogStack = _viewCanvas.dialogStack;
 		int activeDialogs = (dialogStack != null) ? dialogStack.Count : 0;
 		EditorGUILayout.LabelField("Stacked Dialogs : " + activeDialogs);
 		if (activeDialogs > 0) {
@@ -36,15 +36,15 @@ public class ViewCanvasEditorTool : Editor {
 		EditorGUILayout.EndVertical();
 	}
 
-	private void DisplayBaseDialog(string label, BaseDialog dialog) {
-		if (dialog != null) {
-			label = string.Format("{0} : {1} ({2})", 
-				label, 
-				dialog.name, 
-				dialog.GetType().Name
+	private void DisplayBaseDialog(string _label, BaseDialog _dialog) {
+		if (_dialog != null) {
+			_label = string.Format("{0} : {1} ({2})", 
+				_label, 
+				_dialog.name, 
+				_dialog.GetType().Name
 			);
 		}
 
-		EditorGUILayout.LabelField(label);
+		EditorGUILayout.LabelField(_label);
 	}
 }

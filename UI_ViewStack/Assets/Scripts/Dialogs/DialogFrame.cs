@@ -15,7 +15,7 @@ public class DialogFrame : MonoBehaviour {
 		EnableDsiable
 	}
 
-	#region public fields
+	#region public fields and accessors
 
 	public RectTransform dialogPanel;
 	public Button closeButon;
@@ -27,12 +27,12 @@ public class DialogFrame : MonoBehaviour {
 
 	#region Populate methods
 
-	public BaseDialog TryInstantiateDialogContent(BaseDialog baseDialogPrefa) {
+	public BaseDialog TryInstantiateDialogContent(BaseDialog _baseDialogPrefa) {
 		dialogContent = null;
 
-		if (baseDialogPrefa != null) {
+		if (_baseDialogPrefa != null) {
 			dialogContent = GameObjectHelper.AddChildrenWithComponent<BaseDialog>(
-				baseDialogPrefa,
+				_baseDialogPrefa,
 				dialogPanel
 			);
 
@@ -53,7 +53,7 @@ public class DialogFrame : MonoBehaviour {
 			}
 		} else {
 			LogHelper.LogWarning("Failed to set base dialog; " 
-				+ nameof(baseDialogPrefa) 
+				+ nameof(_baseDialogPrefa) 
 				+ " is not set",
 				this
 			);
@@ -85,14 +85,14 @@ public class DialogFrame : MonoBehaviour {
 		}
 	}
 
-	public void Hide(VoidDelegate onHideCompleted = null) {
+	public void Hide(VoidDelegate _onHideCompleted = null) {
 		if (dialogContent != null) {
 			switch (dialogContent.displayAnimType) {
 				case DisplayAnimType.EnableDsiable:
 					gameObject.SetActive(false);
 
-					if(onHideCompleted != null) {
-						onHideCompleted();
+					if(_onHideCompleted != null) {
+						_onHideCompleted();
 					}
 
 					break;
