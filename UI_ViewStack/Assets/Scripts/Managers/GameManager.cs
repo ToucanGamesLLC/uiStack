@@ -25,9 +25,19 @@ public class GameManager : BaseMonobehaviorGameManager<GameManager> {
 
 		yield return RunManagerFunctionBlock<PrefabManager>(PrefabManager.Instance.Initialize);
 
-		yield return RunManagerFunctionBlock<ViewCanvas>(ViewCanvas.Instance.Preinitialize);
+		if (ViewCanvas.Instance == null) {
+			GameObject gameCanvas = PrefabManager.Instance.LoadPrefab(typeof(ViewCanvas).Name);
+			if (gameCanvas != null) {
+				GameObject gameCanvasObject = GameObject.Instantiate(gameCanvas);
 
-		yield return RunManagerFunctionBlock<ViewCanvas>(ViewCanvas.Instance.Initialize);
+			}
+		} else {
+			LogHelper.LogError(typeof(ViewCanvas).Name + " already instantiated", this);
+		}
+
+		// yield return RunManagerFunctionBlock<ViewCanvas>(ViewCanvas.Instance.Preinitialize);
+
+		// yield return RunManagerFunctionBlock<ViewCanvas>(ViewCanvas.Instance.Initialize);
 
 		m_initialized = true;
 

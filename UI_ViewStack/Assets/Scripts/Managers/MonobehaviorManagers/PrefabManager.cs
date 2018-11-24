@@ -132,4 +132,21 @@ public class PrefabManager : BaseMonobehaviorGameManager<PrefabManager> {
 
 	#endregion
 
+
+	#region Instantiate methods
+
+	public GameObject InstantiateGameObject(string _prefabName,
+		bool worldPositionStays = false
+	) {
+		GameObject result = null;
+
+		GameObject prefab = LoadPrefab(_prefabName);
+		if (prefab != null) {
+			result = GameObject.Instantiate(prefab);
+		}
+
+		return result;
+	}
+
+	#endregion
 }

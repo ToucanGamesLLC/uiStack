@@ -1,7 +1,14 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
-public class ViewCanvas : BaseMonobehaviorGameManager<ViewCanvas> {
+public class ViewCanvas : MonoBehaviour { // BaseMonobehaviorGameManager<ViewCanvas> {
+
+	#region Static fields
+
+	public static ViewCanvas Instance = null;
+
+	#endregion
 
 	#region public fields and accessors
 
@@ -9,6 +16,19 @@ public class ViewCanvas : BaseMonobehaviorGameManager<ViewCanvas> {
 
 	public BaseDialog activeDialog { get; private set; }
 	public Stack<BaseDialog> dialogStack { get; private set; }
+
+	#endregion
+
+
+	#region Monobehavior
+
+	private void Awake() {
+		Instance = this;
+	}
+
+	private void OnDestroy() {
+		Instance = null;
+	}
 
 	#endregion
 
@@ -164,6 +184,14 @@ public class ViewCanvas : BaseMonobehaviorGameManager<ViewCanvas> {
 		}
 
 		return result;
+	}
+
+	private void SetDirty() {
+
+#if UNITY_EDITOR
+		EditorUtility.SetDirty(this);
+#endif
+
 	}
 
 }
