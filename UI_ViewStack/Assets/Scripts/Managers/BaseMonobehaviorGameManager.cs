@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using ToucanEngine;
+using System.Collections;
 using UnityEngine;
 using UnityEditor;
 
-public class BaseMonobehaviorGameManager<T> : Singleton<T>, IGameManager where T : MonoBehaviour, IGameManager {
+public class BaseMonobehaviorGameManager<T> : Singleton<T>, IGameManager 
+	where T : MonoBehaviour, IGameManager {
 
 	#region protected fields
 
@@ -11,13 +13,16 @@ public class BaseMonobehaviorGameManager<T> : Singleton<T>, IGameManager where T
 	#endregion
 
 
-	protected void SetDirty() {
+	#region Monobehavior methods
 
-#if UNITY_EDITOR
-		EditorUtility.SetDirty(this);
-#endif
-
+	private void Awake() {
+		gameObject.name = "(S)" + gameObject.name;
+		
+		this.transform.SetParent(GameManager.Instance.transform, false);
 	}
+
+	#endregion
+
 
 	#region IGameManager
 
@@ -37,4 +42,12 @@ public class BaseMonobehaviorGameManager<T> : Singleton<T>, IGameManager where T
 
 	#endregion
 
+
+	protected void SetDirty() {
+
+#if UNITY_EDITOR
+		EditorUtility.SetDirty(this);
+#endif
+
+	}
 }

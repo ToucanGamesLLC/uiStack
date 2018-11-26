@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogFrame : MonoBehaviour {
+public class DialogFrame : UIComponentHelper {
 
 	#region Delegates
 
@@ -17,8 +18,9 @@ public class DialogFrame : MonoBehaviour {
 
 	#region public fields and accessors
 
-	public RectTransform dialogPanel;
+	public TMP_Text titleText;
 	public Button closeButon;
+	public RectTransform dialogPanel;
 
 	public BaseDialog dialogContent { get; private set; }
 
@@ -28,33 +30,37 @@ public class DialogFrame : MonoBehaviour {
 	#region Populate methods
 
 	public BaseDialog TryInstantiateDialogContent(BaseDialog _baseDialogPrefa) {
-		dialogContent = null;
+		if (dialogContent == null) {
+			if (_baseDialogPrefa != null) {
+				dialogContent = GameObjectHelper.AddChildrenWithComponent<BaseDialog>(
+					_baseDialogPrefa,
+					dialogPanel
+				);
 
-		if (_baseDialogPrefa != null) {
-			dialogContent = GameObjectHelper.AddChildrenWithComponent<BaseDialog>(
-				_baseDialogPrefa,
-				dialogPanel
-			);
+				if (dialogContent != null) {
+					RectTransform rectTransform = GetComponent<RectTransform>();
 
-			if (dialogContent != null) {
-				dialogContent.dialogFramePrefab = this;
-				RectTransform rectTransform = GetComponent<RectTransform>();
+					if (rectTransform != null) {
+						rectTransform.offsetMax =
+							new Vector2(-dialogContent.rightOffset, -dialogContent.topOffset);
 
-				if (rectTransform != null) {
-					rectTransform.offsetMax = new Vector2(-dialogContent.rightOffset, -dialogContent.topOffset);
-					rectTransform.offsetMin = new Vector2(dialogContent.leftOffset, dialogContent.bottomOffset);
-				}
-
-				if (closeButon != null) {
-					if (dialogContent.options != null) {
-						closeButon.gameObject.SetActive(dialogContent.options.showCloseButton);
+						rectTransform.offsetMin =
+							new Vector2(dialogContent.leftOffset, dialogContent.bottomOffset);
 					}
+
+					dialogContent.dialogFrame = this;
 				}
+			} else {
+				LogHelper.LogWarning("Failed to set base dialog; "
+					+ nameof(_baseDialogPrefa)
+					+ " is not set",
+					this
+				);
 			}
 		} else {
-			LogHelper.LogWarning("Failed to set base dialog; " 
-				+ nameof(_baseDialogPrefa) 
-				+ " is not set",
+			LogHelper.LogWarning("Failed to set " 
+				+ nameof(dialogContent) 
+				+ "; already exists", 
 				this
 			);
 		}

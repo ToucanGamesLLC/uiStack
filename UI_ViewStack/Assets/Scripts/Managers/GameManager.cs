@@ -1,44 +1,73 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using ToucanEngine;
+using System.Collections;
 using UnityEngine;
+using System;
 
 public class GameManager : BaseMonobehaviorGameManager<GameManager> {
 
+	#region Delegates
+
 	private delegate IEnumerator IEnumeratorVoid();
 
-	public List<IGameManager> m_gameManagers;
+	#endregion
+
+
+	#region Monobehavior
 
 	private void Start() {
 		StartCoroutine(InitializeGameManagers());
 	}
 
+	#endregion
 
 	#region BaseMonobehaviorGameManager
 
+	private IEnumerator PreInitializeManagers() {
+		//PrefabManager.Instance.name = "(S)" + PrefabManager.Instance.GetType().Name;
+		//PrefabManager.Instance.transform.SetParent(this.transform);
+
+		yield return RunManagerFunctionBlock(typeof(PrefabManager),
+			PrefabManager.Instance.Preinitialize
+		);
+
+		yield return RunManagerFunctionBlock(typeof(LocalizationManager),
+			LocalizationManager.Instance.Preinitialize
+		);
+	}
+
+	private IEnumerator InitializeManagers() {
+		yield return RunManagerFunctionBlock(typeof(PrefabManager),
+			PrefabManager.Instance.Initialize
+		);
+
+		yield return RunManagerFunctionBlock(typeof(LocalizationManager),
+			LocalizationManager.Instance.Initialize
+		);
+	}
+
 	private IEnumerator InitializeGameManagers() {
 		yield return base.Initialize();
-		
-		PrefabManager.Instance.name = "(S)" + PrefabManager.Instance.GetType().Name;
-		PrefabManager.Instance.transform.SetParent(this.transform);
-		
-		yield return RunManagerFunctionBlock<PrefabManager>(PrefabManager.Instance.Preinitialize);
 
-		yield return RunManagerFunctionBlock<PrefabManager>(PrefabManager.Instance.Initialize);
+		yield return PreInitializeManagers();
+
+		yield return InitializeManagers();
 
 		if (ViewCanvas.Instance == null) {
-			GameObject gameCanvas = PrefabManager.Instance.LoadPrefab(typeof(ViewCanvas).Name);
-			if (gameCanvas != null) {
-				GameObject gameCanvasObject = GameObject.Instantiate(gameCanvas);
+			ViewCanvas viewCanvasPrefab = 
+				PrefabManager.Instance.LoadPrefabWithComponent<ViewCanvas>();
 
+			if (viewCanvasPrefab != null) {
+				if (GameObject.Instantiate(viewCanvasPrefab.gameObject) == null) {
+					LogHelper.LogError("Failed to instantiate "
+						+ typeof(ViewCanvas).Name,
+						this
+					);
+				}
 			}
 		} else {
 			LogHelper.LogError(typeof(ViewCanvas).Name + " already instantiated", this);
 		}
-
-		// yield return RunManagerFunctionBlock<ViewCanvas>(ViewCanvas.Instance.Preinitialize);
-
-		// yield return RunManagerFunctionBlock<ViewCanvas>(ViewCanvas.Instance.Initialize);
-
+		
 		m_initialized = true;
 
 		SetDirty();
@@ -47,14 +76,20 @@ public class GameManager : BaseMonobehaviorGameManager<GameManager> {
 	#endregion
 
 
-	private IEnumerator RunManagerFunctionBlock<T>(IEnumeratorVoid managerFunction) {
+	private IEnumerator RunManagerFunctionBlock(Type managerType, IEnumeratorVoid managerFunction) {
 		if (managerFunction != null) {
 			int step = 0;
 
 			IEnumerator enumerator = managerFunction();
 			while(enumerator.MoveNext()) {
 				step++;
-				LogHelper.LogMessage(typeof(T).Name + "_" + managerFunction.Method.Name + "_" + step);
+				LogHelper.LogMessage(managerType.Name
+					+ "_" 
+					+ managerFunction.Method.Name 
+					+ "_" 
+					+ step
+				);
+
 				yield return null;
 			}
 		}

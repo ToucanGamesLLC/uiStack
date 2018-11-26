@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 
-public class ViewCanvas : MonoBehaviour { // BaseMonobehaviorGameManager<ViewCanvas> {
+public class ViewCanvas : MonoBehaviour { 
 
 	#region Static fields
 
@@ -39,7 +39,7 @@ public class ViewCanvas : MonoBehaviour { // BaseMonobehaviorGameManager<ViewCan
 		T result = LoadDialog<T>(_dialogName);
 
 		if (result != null) {
-			result.dialogFramePrefab.gameObject.SetActive(false);
+			result.dialogFrame.gameObject.SetActive(false);
 
 			if (activeDialog != null) {
 				BaseDialog dialogToHide = activeDialog;
@@ -47,12 +47,12 @@ public class ViewCanvas : MonoBehaviour { // BaseMonobehaviorGameManager<ViewCan
 
 				activeDialog = result;
 
-				dialogToHide.dialogFramePrefab.Hide(() => {
-					activeDialog.dialogFramePrefab.Show();
+				dialogToHide.dialogFrame.Hide(() => {
+					activeDialog.dialogFrame.Show();
 				});
 			} else {
 				activeDialog = result;
-				activeDialog.dialogFramePrefab.Show();
+				activeDialog.dialogFrame.Show();
 			}
 
 			SetDirty();
@@ -80,13 +80,13 @@ public class ViewCanvas : MonoBehaviour { // BaseMonobehaviorGameManager<ViewCan
 				if(_dialog == activeDialog) {
 					activeDialog = PopDialog();
 					if (activeDialog != null) {
-						activeDialog.dialogFramePrefab.gameObject.SetActive(false);
+						activeDialog.dialogFrame.gameObject.SetActive(false);
 					}
 
-					_dialog.dialogFramePrefab.Hide(() => {
-						GameObjectHelper.Destroy(_dialog.dialogFramePrefab.gameObject, 0.25f);
+					_dialog.dialogFrame.Hide(() => {
+						GameObjectHelper.Destroy(_dialog.dialogFrame.gameObject, 0.25f);
 						if(activeDialog!= null) {
-							activeDialog.dialogFramePrefab.Show();
+							activeDialog.dialogFrame.Show();
 						}
 					});
 

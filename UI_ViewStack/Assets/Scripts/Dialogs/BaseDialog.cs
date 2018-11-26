@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
-public abstract class BaseDialog : MonoBehaviour {
+public abstract class BaseDialog : UIComponentHelper {
 
 	#region Callbacks fields
-
+	
 	public delegate void VoidBaseDialogDelegate(BaseDialog dialog);
 
 	private VoidBaseDialogDelegate m_onCloseDialog;
-
+	
 	#endregion
 
 
@@ -22,6 +23,7 @@ public abstract class BaseDialog : MonoBehaviour {
 
 	public DialogFrame dialogFramePrefab;
 	public DialogFrame.DisplayAnimType displayAnimType;
+
 	public float topOffset;
 	public float bottomOffset;
 	public float leftOffset;
@@ -38,18 +40,24 @@ public abstract class BaseDialog : MonoBehaviour {
         public bool allowRefrehInterval;
 		public bool showCloseButton;
 		public VoidBaseDialogDelegate onCloseDialog;
-	
+		
 	}
 
-    public Options options { get; private set; }
+    public Options options { get; protected set; }
+
+	#endregion
+
+
+	#region Accessors fields
 	
+	public DialogFrame dialogFrame { get; set; }
 	#endregion
 
 
 	#region Private fields
 
 	private float m_updateInterval;
-
+	
 	#endregion
 
 
@@ -79,6 +87,16 @@ public abstract class BaseDialog : MonoBehaviour {
 
 		if (_options != null) {
 			m_onCloseDialog = _options.onCloseDialog;
+
+			if (dialogFrame != null) {
+				if (dialogFrame.closeButon != null) {
+					SetActive(dialogFrame.closeButon.gameObject, options.showCloseButton);
+				}
+
+				if (dialogFrame.titleText != null) {
+					SetText(dialogFrame.titleText, options.titleText);
+				}
+			}
 		}
     }
 

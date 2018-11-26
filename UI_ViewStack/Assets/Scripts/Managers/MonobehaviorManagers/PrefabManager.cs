@@ -4,11 +4,7 @@ using UnityEngine;
 
 public class PrefabManager : BaseMonobehaviorGameManager<PrefabManager> {
 
-	#region const fields
-
-	private const string SPRTES_CSV_FILE_NAME = "Sprites";
-
-	#endregion
+	
 
 
 	#region public fields
@@ -130,23 +126,29 @@ public class PrefabManager : BaseMonobehaviorGameManager<PrefabManager> {
 		return result;
 	}
 
-	#endregion
+	public T LoadPrefabWithComponent<T>(string _prefabName = null) where T : MonoBehaviour {
+		T result = null;
 
+		if (string.IsNullOrEmpty(_prefabName)) {
+			_prefabName = typeof(T).Name;
+		}
 
-	#region Instantiate methods
-
-	public GameObject InstantiateGameObject(string _prefabName,
-		bool worldPositionStays = false
-	) {
-		GameObject result = null;
-
-		GameObject prefab = LoadPrefab(_prefabName);
-		if (prefab != null) {
-			result = GameObject.Instantiate(prefab);
+		GameObject prefabObject = LoadPrefab(_prefabName);
+		if (prefabObject != null) {
+			result = prefabObject.GetComponent<T>();
+			if (result == null) {
+				LogHelper.LogError("Failed to load prefab wih component "
+					+ typeof(T).Name
+					+ "; missing component in prefab "
+					+ _prefabName,
+					this
+				);
+			}
 		}
 
 		return result;
 	}
 
 	#endregion
+
 }

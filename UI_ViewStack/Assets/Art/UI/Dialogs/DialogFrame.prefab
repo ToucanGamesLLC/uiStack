@@ -302,8 +302,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a43dd19d68e082439aa792c67cdc992, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogPanel: {fileID: 224150448783597356}
+  titleText: {fileID: 114714671300422888}
   closeButon: {fileID: 114738898880516438}
+  dialogPanel: {fileID: 224150448783597356}
 --- !u!114 &114635776883451864
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -399,7 +400,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 44.75
+  m_fontSize: 41.6
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

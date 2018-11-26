@@ -1,11 +1,15 @@
 ﻿using System.Collections;
 
-public interface IGameManager {
+namespace ToucanEngine {
 
-	IEnumerator Preinitialize();
-	IEnumerator Initialize();
-	IEnumerator Reset();
+	public interface IGameManager {
 
-	bool initialzied { get; }
+		IEnumerator Preinitialize();
+		IEnumerator Initialize();
+		IEnumerator Reset();
+
+		bool initialzied { get; }
+
+	}
 
 }
