@@ -1,6 +1,8 @@
 ﻿
 public static class DialogHelper {
 
+	#region TwoButtonsDialog methods
+
 	public static TwoButtonsDialog DisplayAlertDialog(TwoButtonsDialog.Options _options) {
 		TwoButtonsDialog result = null;
 
@@ -22,7 +24,10 @@ public static class DialogHelper {
 		return result;
 	}
 
-	public static T DisplayDialog<T>(BaseDialog.Options _options, string _dialogName = null) 
+	#endregion
+
+
+	private static T DisplayDialog<T>(BaseDialog.Options _options, string _dialogName = null) 
 		where T : BaseDialog {
 
 		T result = null;
@@ -44,4 +49,5 @@ public static class DialogHelper {
 
 		return result;
 	}
+
 }
